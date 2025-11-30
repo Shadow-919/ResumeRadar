@@ -1,0 +1,149 @@
+{
+  "sections": {
+    "Contact Info": {
+      "keywords": [
+        "contact",
+        "contact information",
+        "contact details",
+        "personal information",
+        "personal details",
+        "phone",
+        "email",
+        "address",
+        "mobile",
+        "telephone",
+        "contact me"
+      ],
+      "special_rule": true
+    },
+    "Summary": {
+      "keywords": [
+        "summary",
+        "professional summary",
+        "career summary",
+        "profile",
+        "professional profile",
+        "career profile",
+        "objective",
+        "career objective",
+        "about me",
+        "introduction",
+        "overview",
+        "professional overview",
+        "personal summary"
+      ],
+      "special_rule": false
+    },
+    "Skills": {
+      "keywords": [
+        "skills",
+        "technical skills",
+        "core competencies",
+        "competencies",
+        "expertise",
+        "areas of expertise",
+        "key skills",
+        "proficiencies",
+        "technologies",
+        "tools",
+        "core skills",
+        "strengths",
+        "key strengths"
+      ],
+      "special_rule": false
+    },
+    "Projects": {
+      "keywords": [
+        "projects",
+        "project experience",
+        "key projects",
+        "academic projects",
+        "personal projects",
+        "portfolio",
+        "work samples",
+        "project work",
+        "major project",
+        "minor project",
+        "academic project"
+      ],
+      "special_rule": false
+    },
+    "Experience": {
+      "keywords": [
+        "experience",
+        "work experience",
+        "professional experience",
+        "employment history",
+        "work history",
+        "career history",
+        "employment",
+        "positions held",
+        "professional background",
+        "internships",
+        "internship experience",
+        "industrial training",
+        "work exposure",
+        "experience & achievements",
+        "experience and achievements",
+        "achievements"
+      ],
+      "special_rule": false
+    },
+    "Achievements": {
+      "keywords": [
+        "achievements",
+        "accomplishments",
+        "awards",
+        "honors",
+        "recognition",
+        "awards and honors",
+        "achievements and awards",
+        "distinctions",
+        "notable achievements"
+      ],
+      "special_rule": false
+    },
+    "Education": {
+      "keywords": [
+        "education",
+        "educational background",
+        "academic background",
+        "qualifications",
+        "academic qualifications",
+        "degrees",
+        "academic credentials",
+        "schooling",
+        "academics"
+      ],
+      "special_rule": false
+    },
+    "Certifications": {
+      "keywords": [
+        "certifications",
+        "certificates",
+        "professional certifications",
+        "licenses",
+        "credentials",
+        "professional credentials",
+        "training",
+        "professional training",
+        "courses",
+        "online courses",
+        "workshops",
+        "seminars"
+      ],
+      "special_rule": false
+    },
+    "Extra-Curricular": {
+      "keywords": [
+        "extra curricular",
+        "extracurricular",
+        "co curricular",
+        "co-curricular",
+        "activities",
+        "student activities"
+      ],
+      "special_rule": false
+    }
+  }
+}

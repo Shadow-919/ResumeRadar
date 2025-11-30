@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis Dashboard</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(21, 27, 56, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-blue {
+            background: #3B82F6;
+            transition: all 0.3s ease;
+        }
+
+        .btn-blue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            background: #2563eb;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .skill-badge {
+            transition: all 0.3s ease;
+        }
+
+        .skill-badge:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Navigation - Hidden on Mobile -->
+        <div class="hidden md:flex items-center justify-between mb-6 animate-fade-in">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-tachometer-alt text-3xl text-violet-500"></i>
+                <h1 class="text-2xl md:text-3xl font-bold text-violet-500">Analysis Dashboard</h1>
+            </div>
+            <div class="flex gap-3">
+                <a href="/?clear=true"
+                    class="glass-card px-4 py-2 rounded-xl text-gray-300 hover:text-white transition-all flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>New Analysis</span>
+                </a>
+                <button onclick="downloadReport()"
+                    class="btn-blue px-4 py-2 rounded-xl text-white flex items-center gap-2">
+                    <i class="fas fa-download"></i>
+                    <span>Download Report</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Header - Title Only -->
+        <div class="md:hidden flex items-center justify-center mb-4 animate-fade-in">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-tachometer-alt text-2xl text-violet-500"></i>
+                <h1 class="text-xl font-bold text-violet-500">Analysis Dashboard</h1>
+            </div>
+        </div>
+
+        <!-- Mobile Action Buttons - Above ATS Score Card -->
+        <div class="md:hidden flex flex-col gap-3 mb-6 animate-fade-in">
+            <a href="/?clear=true"
+                class="glass-card px-6 py-3 rounded-xl text-gray-300 hover:text-white transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span>New Analysis</span>
+            </a>
+            <button onclick="downloadReport()"
+                class="btn-blue px-6 py-3 rounded-xl text-white flex items-center justify-center gap-2">
+                <i class="fas fa-download"></i>
+                <span>Download Report</span>
+            </button>
+        </div>
+
+        <!-- ATS Score & Candidate Profile Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 animate-fade-in">
+            <!-- ATS Score Card -->
+            {% if ats_score is not none %}
+            <div class="glass-card rounded-2xl p-6 card-hover">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-bullseye text-indigo-400"></i>
+                    ATS Score
+                </h2>
+                <div class="flex items-center justify-center" style="min-height: 350px;">
+                    <div class="relative" style="width: 400px; height: 400px;">
+                        <canvas id="atsGaugeChart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center"
+                            style="pointer-events: auto;">
+                            <div class="text-7xl font-bold {% if ats_score < 40 %}text-red-500{% elif ats_score < 60 %}text-yellow-500{% elif ats_score < 75 %}text-green-500{% else %}text-blue-500{% endif %}"
+                                style="line-height: 0.9; user-select: text; cursor: text;">
+                                {{ ats_score }}%
+                            </div>
+                            <div class="text-base text-gray-400 mt-4" style="user-select: text; cursor: text;">
+                                {% if ats_score < 40 %}Needs Improvement{% elif ats_score < 60 %}Fair{% elif ats_score <
+                                    75 %}Good{% else %}Excellent{% endif %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Candidate Profile Card -->
+                {% if candidate_name %}
+                <div class="glass-card rounded-2xl p-6 card-hover">
+                    <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-user-circle text-purple-400"></i>
+                        Candidate Profile
+                    </h2>
+                    <div class="space-y-3">
+                        <div
+                            class="flex items-center gap-3 p-3 bg-purple-500/10 rounded-xl border border-purple-500/30">
+                            <i class="fas fa-user text-purple-400"></i>
+                            <div>
+                                <div class="text-xs text-gray-400">Name</div>
+                                <div class="text-white font-semibold">{{ candidate_name }}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-blue-500/10 rounded-xl border border-blue-500/30">
+                            <i class="fas fa-envelope text-blue-400"></i>
+                            <div>
+                                <div class="text-xs text-gray-400">Email</div>
+                                <div class="text-white font-semibold">{{ candidate_email if candidate_email else 'Not
+                                    Found' }}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-green-500/10 rounded-xl border border-green-500/30">
+                            <i class="fas fa-phone text-green-400"></i>
+                            <div>
+                                <div class="text-xs text-gray-400">Phone</div>
+                                <div class="text-white font-semibold">{{ candidate_phone if candidate_phone else 'Not
+                                    Found' }}</div>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center gap-3 p-3 bg-orange-500/10 rounded-xl border border-orange-500/30">
+                            <i class="fas fa-briefcase text-orange-400"></i>
+                            <div>
+                                <div class="text-xs text-gray-400">Experience</div>
+                                <div class="text-white font-semibold" style="text-transform: capitalize;">
+                                    {% set y = experience.total_experience_years %}
+                                    {% set m = experience.total_experience_months %}
+                                    {% if y == 0 and m == 0 %}0 Years{% else %}{% if y > 0 %}{{ y }} Year{% if y != 1
+                                    %}s{% endif %}{% endif %}{% if y > 0 and m > 0 %} {% endif %}{% if m > 0 %}{{ m }}
+                                    Month{% if m != 1 %}s{% endif %}{% endif %}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center gap-3 p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/30">
+                            <i class="fas fa-graduation-cap text-indigo-400"></i>
+                            <div class="flex-1">
+                                <div class="text-xs text-gray-400">Education</div>
+                                <div class="text-white font-semibold text-sm">
+                                    {% if education.resume_detected %}
+                                    {% for degree in education.resume_detected[:2] %}{{ degree }}{% if not loop.last %},
+                                    {% endif %}{% endfor %}{% if education.resume_detected|length > 2 %}...{% endif %}
+                                    {% else %}
+                                    Not Found
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/30">
+                            <i class="fas fa-layer-group text-cyan-400"></i>
+                            <div>
+                                <div class="text-xs text-gray-400">Resume Type</div>
+                                <div class="text-white font-semibold">{{ length.resume_type|title }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 animate-fade-in">
+                <!-- Section Coverage Pie Chart -->
+                <div class="glass-card rounded-2xl p-6 card-hover">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-chart-pie text-pink-400"></i>
+                        Section Coverage
+                    </h3>
+                    <div class="w-full max-w-xs mx-auto">
+                        <canvas id="sectionChart"></canvas>
+                    </div>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-green-500 rounded"></div>
+                                <span class="text-gray-300">Present</span>
+                            </div>
+                            <span class="text-white font-semibold">{{ results.present|length }} ({{
+                                ((results.present|length / (results.present|length + results.missing|length) * 100) if
+                                (results.present|length + results.missing|length) > 0 else 0)|round(1) }}%)</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-red-500 rounded"></div>
+                                <span class="text-gray-300">Missing</span>
+                            </div>
+                            <span class="text-white font-semibold">{{ results.missing|length }} ({{
+                                ((results.missing|length / (results.present|length + results.missing|length) * 100) if
+                                (results.present|length + results.missing|length) > 0 else 0)|round(1) }}%)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Match Pie Chart -->
+                <div class="glass-card rounded-2xl p-6 card-hover">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-bullseye text-cyan-400"></i>
+                        Skills Match
+                    </h3>
+                    <div class="w-full max-w-xs mx-auto">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-green-500 rounded"></div>
+                                <span class="text-gray-300">Matched</span>
+                            </div>
+                            <span class="text-white font-semibold">{{ skills.matched_skills|length }} ({{
+                                ((skills.matched_skills|length / (skills.matched_skills|length +
+                                skills.missing_skills|length) * 100) if (skills.matched_skills|length +
+                                skills.missing_skills|length) > 0 else 0)|round(1) }}%)</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-red-500 rounded"></div>
+                                <span class="text-gray-300">Missing</span>
+                            </div>
+                            <span class="text-white font-semibold">{{ skills.missing_skills|length }} ({{
+                                ((skills.missing_skills|length / (skills.matched_skills|length +
+                                skills.missing_skills|length) * 100) if (skills.matched_skills|length +
+                                skills.missing_skills|length) > 0 else 0)|round(1) }}%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Radar Chart -->
+            {% if radar_metrics %}
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-chart-line text-yellow-400"></i>
+                    Overall Resume Profile
+                </h2>
+                <p class="text-gray-400 text-sm mb-6">Combined view of Skills Match, Action Verbs, Section Coverage, and
+                    Resume Quality</p>
+                <div class="w-full max-w-2xl mx-auto" style="height: 400px;">
+                    <canvas id="overallRadarChart"></canvas>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ATS Breakdown Chart -->
+            {% if ats_breakdown %}
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-indigo-400"></i>
+                    ATS Scoring Breakdown
+                </h2>
+                <p class="text-gray-400 text-sm mb-6">Component scores contributing to your overall ATS score</p>
+                <div class="w-full max-w-3xl mx-auto" style="height: 350px;">
+                    <canvas id="atsBreakdownChart"></canvas>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Resume Length Card -->
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-file-alt text-blue-400"></i>
+                    Resume Length Analysis
+                </h2>
+                <div class="text-center">
+                    <div
+                        class="inline-block px-8 py-4 rounded-xl mb-6 {% if length.category == 'Short' %}bg-yellow-500/10 border-2 border-yellow-500{% elif length.category == 'Good' %}bg-green-500/10 border-2 border-green-500{% elif length.category == 'Long' %}bg-orange-500/10 border-2 border-orange-500{% else %}bg-red-500/10 border-2 border-red-500{% endif %}">
+                        <div class="text-4xl font-bold mb-2" style="color: {{ length.color }}">{{ length.category }}
+                        </div>
+                        <div class="text-gray-300">{{ length.description }}</div>
+                    </div>
+                    <div class="block">
+                        <div class="inline-block px-6 py-3 rounded-xl"
+                            style="background: rgba(156, 163, 175, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(156, 163, 175, 0.2);">
+                            <div class="text-sm text-gray-400">Total Word Count</div>
+                            <div class="text-3xl font-bold text-white">{{ length.word_count }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Verb Usage Card -->
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-bolt text-yellow-400"></i>
+                    Action Verb Usage
+                </h2>
+                <div class="text-center">
+                    <div
+                        class="inline-block px-8 py-4 rounded-xl mb-4 {% if action_verb_results.category == 'Very Weak' %}bg-red-500/10 border-2 border-red-500{% elif action_verb_results.category == 'Weak' %}bg-orange-500/10 border-2 border-orange-500{% elif action_verb_results.category == 'Average' %}bg-blue-500/10 border-2 border-blue-500{% elif action_verb_results.category == 'Strong' %}bg-green-500/10 border-2 border-green-500{% else %}bg-purple-500/10 border-2 border-purple-500{% endif %}">
+                        <div class="text-4xl font-bold mb-2" style="color: {{ action_verb_results.color }}">{{
+                            action_verb_results.category }}</div>
+                        <div class="text-gray-300">{{ action_verb_results.description }}</div>
+                    </div>
+                    <div class="flex justify-center max-w-md mx-auto mt-4">
+                        <div class="px-6 py-4 rounded-xl"
+                            style="background: rgba(156, 163, 175, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(156, 163, 175, 0.2);">
+                            <div class="text-sm text-gray-400 text-center">Action Verbs Found</div>
+                            <div class="text-3xl font-bold text-white text-center">{{
+                                action_verb_results.action_verb_count }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Coverage Details -->
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-list-check text-green-400"></i>
+                    Section Coverage Details
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {% for section in results.present %}
+                    <div
+                        class="skill-badge bg-green-500/10 border border-green-500/50 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                        <span class="text-white font-medium">{{ section }}</span>
+                    </div>
+                    {% endfor %}
+                    {% for section in results.missing %}
+                    <div
+                        class="skill-badge bg-red-500/10 border border-red-500/50 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <i class="fas fa-times-circle text-red-500"></i>
+                        <span class="text-white font-medium">{{ section }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Technical Skills -->
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-code text-blue-400"></i>
+                    Technical Skills Match
+                </h2>
+                {% if technical_matched or technical_missing %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {% for skill in technical_matched %}
+                    <div
+                        class="skill-badge bg-green-500/10 border border-green-500/50 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                        <span class="text-white font-medium" style="text-transform: capitalize;">{{ skill }}</span>
+                    </div>
+                    {% endfor %}
+                    {% for skill in technical_missing %}
+                    <div
+                        class="skill-badge bg-red-500/10 border border-red-500/50 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <i class="fas fa-times-circle text-red-500"></i>
+                        <span class="text-white font-medium" style="text-transform: capitalize;">{{ skill }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-400 text-center py-8">No technical skills found in job description</p>
+                {% endif %}
+            </div>
+
+            <!-- Soft Skills -->
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-handshake text-purple-400"></i>
+                    Soft Skills Match
+                </h2>
+                {% if soft_matched or soft_missing %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {% for skill in soft_matched %}
+                    <div
+                        class="skill-badge bg-green-500/10 border border-green-500/50 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                        <span class="text-white font-medium" style="text-transform: capitalize;">{{ skill }}</span>
+                    </div>
+                    {% endfor %}
+                    {% for skill in soft_missing %}
+                    <div
+                        class="skill-badge bg-red-500/10 border border-red-500/50 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <i class="fas fa-times-circle text-red-500"></i>
+                        <span class="text-white font-medium" style="text-transform: capitalize;">{{ skill }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-400 text-center py-8">No soft skills found in job description</p>
+                {% endif %}
+            </div>
+
+            <!-- Education Analysis -->
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-graduation-cap text-indigo-400"></i>
+                    Education Analysis
+                </h2>
+                <div class="mb-6 text-center">
+                    <span
+                        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-lg font-semibold {% if education.matched %}bg-green-500/10 text-green-500 border-2 border-green-500{% else %}bg-red-500/10 text-red-500 border-2 border-red-500{% endif %}">
+                        <i class="fas fa-{% if education.matched %}check-circle{% else %}times-circle{% endif %}"></i>
+                        {% if education.matched %}Requirements Met{% else %}Requirements Not Met{% endif %}
+                    </span>
+                </div>
+
+                <!-- JD Requirements -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-3"><i
+                            class="fas fa-clipboard-list text-purple-400"></i> Job Requirements</h3>
+                    {% if education.jd_detected %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {% for degree in education.jd_detected %}
+                        <div
+                            class="bg-purple-500/10 border border-purple-500/30 px-4 py-3 rounded-xl flex items-center gap-2">
+                            <i class="fas fa-book text-purple-400"></i>
+                            <span class="text-white">{{ degree }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-gray-400 text-center py-4">No specific requirements found</p>
+                    {% endif %}
+                </div>
+
+                <!-- Resume Qualifications -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-3"><i
+                            class="fas fa-user-graduate text-green-400"></i>
+                        Your Qualifications</h3>
+                    {% if education.resume_detected %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {% for degree in education.resume_detected %}
+                        <div
+                            class="bg-green-500/10 border border-green-500/50 px-4 py-3 rounded-xl flex items-center gap-2">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                            <span class="text-white">{{ degree }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-gray-400 text-center py-4">No degrees detected in resume</p>
+                    {% endif %}
+                </div>
+
+                <!-- Missing Qualifications -->
+                {% if education.missing_groups %}
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-300 mb-3"><i
+                            class="fas fa-exclamation-triangle text-red-400"></i> Missing Qualifications</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {% for degree in education.missing_groups %}
+                        <div
+                            class="bg-red-500/10 border border-red-500/50 px-4 py-3 rounded-xl flex items-center gap-2">
+                            <i class="fas fa-times-circle text-red-500"></i>
+                            <span class="text-white">{{ degree }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Experience Analysis -->
+            <div class="glass-card rounded-2xl p-6 mb-6 card-hover animate-fade-in">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-briefcase text-orange-400"></i>
+                    Experience Analysis
+                </h2>
+                <div class="mb-6 text-center">
+                    <span
+                        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-lg font-semibold {% if experience.meets_requirement %}bg-green-500/10 text-green-500 border-2 border-green-500{% else %}bg-red-500/10 text-red-500 border-2 border-red-500{% endif %}">
+                        <i
+                            class="fas fa-{% if experience.meets_requirement %}check-circle{% else %}times-circle{% endif %}"></i>
+                        {% if experience.meets_requirement %}Requirements Met{% else %}Requirements Not Met{% endif %}
+                    </span>
+                </div>
+
+                <!-- Experience Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-briefcase text-blue-400 text-2xl"></i>
+                            <div>
+                                <div class="text-sm text-gray-400">Your Experience</div>
+                                <div class="text-2xl font-bold text-white" style="text-transform: capitalize;">
+                                    {% set y = experience.total_experience_years %}
+                                    {% set m = experience.total_experience_months %}
+                                    {% if y == 0 and m == 0 %}0 Years{% else %}{% if y > 0 %}{{ y }} Year{% if y != 1
+                                    %}s{% endif %}{% endif %}{% if m > 0 %} {{ m }} Month{% if m != 1 %}s{% endif %}{%
+                                    endif %}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-purple-500/10 border border-purple-500/30 p-4 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-clipboard-list text-purple-400 text-2xl"></i>
+                            <div>
+                                <div class="text-sm text-gray-400">JD Requirement</div>
+                                <div class="text-2xl font-bold text-white" style="text-transform: capitalize;">
+                                    {% if experience.jd_required_years > 0 or experience.jd_required_months > 0 %}
+                                    {{ experience.jd_required_years }} Year{% if experience.jd_required_years != 1 %}s{%
+                                    endif %}{% if experience.jd_required_months > 0 %} {{ experience.jd_required_months
+                                    }} Month{% if experience.jd_required_months != 1 %}s{% endif %}{% endif %}
+                                    {% else %}
+                                    No Specific Requirement
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Work History -->
+                {% if experience.experience_ranges %}
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-300 mb-3"><i
+                            class="fas fa-calendar-alt text-green-400"></i>
+                        Work History</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {% for range in experience.experience_ranges %}
+                        <div class="bg-green-500/10 border border-green-500/30 p-4 rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-calendar text-green-400 text-2xl"></i>
+                                <div>
+                                    <div class="text-sm text-gray-400">{{ range.start }} - {{ range.end }}</div>
+                                    <div class="text-white font-semibold text-base" style="text-transform: capitalize;">
+                                        {{ range.months }} Month{% if range.months != 1 %}s{% endif %}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <script>
+            // Chart.js Dark Theme Configuration
+            Chart.defaults.color = '#9ca3af';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+            // Section Coverage Pie Chart
+            const sectionCtx = document.getElementById('sectionChart').getContext('2d');
+            new Chart(sectionCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Present', 'Missing'],
+                    datasets: [{
+                        data: [{{ results.present | length }}, {{ results.missing | length }}],
+                backgroundColor: ['#10b981', '#ef4444'],
+                borderWidth: 0
+            }]
+                },
+                options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+            });
+
+            // Skills Match Pie Chart
+            const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+            new Chart(skillsCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Matched', 'Missing'],
+                    datasets: [{
+                        data: [{{ skills.matched_skills | length }}, {{ skills.missing_skills | length }}],
+                backgroundColor: ['#10b981', '#ef4444'],
+                borderWidth: 0
+            }]
+                },
+                options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+            });
+
+            // ATS Gauge Chart
+            {% if ats_score is not none %}
+            const atsScore = {{ ats_score }};
+            const atsColor = atsScore < 40 ? "#ef4444" : atsScore < 60 ? "#f59e0b" : atsScore < 75 ? "#10b981" : "#3b82f6";
+            const atsGaugeCtx = document.getElementById('atsGaugeChart').getContext('2d');
+            new Chart(atsGaugeCtx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [atsScore, 100 - atsScore],
+                        backgroundColor: [atsColor, 'rgba(255, 255, 255, 0.1)'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '80%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+            {% endif %}
+
+            // ATS Breakdown Chart
+            {% if ats_breakdown %}
+            const atsBreakdown = {{ ats_breakdown| tojson }};
+            const atsBreakdownCtx = document.getElementById('atsBreakdownChart').getContext('2d');
+            new Chart(atsBreakdownCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(atsBreakdown),
+                    datasets: [{
+                        label: 'Component Score',
+                        data: Object.values(atsBreakdown),
+                        backgroundColor: '#6366f1',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            min: 0,
+                            max: 100,
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: 'rgba(255, 255, 255, 0.8)' },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            {% endif %}
+
+            // Radar Chart
+            {% if radar_metrics %}
+            const radarMetrics = {{ radar_metrics| tojson }};
+            const radarCtx = document.getElementById('overallRadarChart').getContext('2d');
+            new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Skills Match', 'Action Verbs', 'Section Coverage', 'Resume Quality'],
+                    datasets: [{
+                        label: 'Resume Profile',
+                        data: [radarMetrics.skills, radarMetrics.action_verbs, radarMetrics.sections, radarMetrics.resume_quality],
+                        fill: true,
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        pointBackgroundColor: 'rgba(139, 92, 246, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(139, 92, 246, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                color: '#06b6d4',
+                                backdropColor: 'transparent',
+                                z: 1
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.3)' },
+                            angleLines: { color: 'rgba(255, 255, 255, 0.3)' },
+                            pointLabels: { color: 'rgba(255, 255, 255, 0.8)', font: { size: 12 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, labels: { color: 'rgba(255, 255, 255, 0.8)' } }
+                    }
+                }
+            });
+            {% endif %}
+
+            // PDF Download Function
+            function downloadReport() {
+                window.location.href = '/download-report';
+            }
+        </script>
+</body>
+
+</html>

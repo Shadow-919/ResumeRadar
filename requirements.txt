@@ -1,0 +1,7 @@
+Flask
+PyMuPDF
+python-docx
+Werkzeug
+python-dateutil
+dateparser
+reportlab

@@ -145,3 +145,22 @@ All datasets are optimized for high-accuracy matching.
   <img src="assets/R1.JPG" width="80%" />
   <img src="assets/R2.JPG" width="80%" />
 </p>
+
+---
+
+## 💡 Author
+**Developed by [Aditya Shinde](https://github.com/Shadow-919)**  
+📧 *adityashinde54321@gmail.com*
+
+---
+
+## 🚫 Note
+
+> This project is shared for **demonstration purposes only**.  
+> Setup instructions are intentionally excluded.
+
+---
+
+## 📝 License
+
+This project is licensed under the [MIT License](LICENSE).

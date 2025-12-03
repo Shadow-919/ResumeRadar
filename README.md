@@ -85,6 +85,33 @@ All datasets are optimized for high-accuracy matching.
 
 ---
 
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|:------|:------------|
+| **Language** | Python, JavaScript |
+| **Backend** | Flask |
+| **NLP & Processing** | PyMuPDF, python-docx, dateparser, regex |
+| **Frontend** | HTML, CSS, TailwindCSS |
+| **Charts & Visualization** | Chart.js |
+| **Version Control** | Git, GitHub |
+
+---
+
+## 🧪 Key Analysis Metrics
+
+| Metric | Description |
+|:------|:------------|
+| **ATS Score** | Overall resume compatibility with job description |
+| **Skill Match** | Percentage match for both technical & soft skills |
+| **Action Verb Density** | Measures strength & impact of resume wording |
+| **Experiene Match** | Checks if experience meets JD requirements |
+| **Education Match** | Validates degree/domain relevance |
+| **Section Coverage** | Detects missing or incomplete resume sections |
+| **Resume Length** | Evaluates optimal word count based on experience |
+
+---
+
 ## 🌐 Project UI Screens
 
 ### 🖥️ Home Page with Resume upload
@@ -118,32 +145,3 @@ All datasets are optimized for high-accuracy matching.
   <img src="assets/R1.JPG" width="80%" />
   <img src="assets/R2.JPG" width="80%" />
 </p>
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|:------|:------------|
-| **Language** | Python, JavaScript |
-| **Backend** | Flask |
-| **NLP & Processing** | PyMuPDF, python-docx, dateparser, regex |
-| **Frontend** | HTML, CSS, TailwindCSS |
-| **Charts & Visualization** | Chart.js |
-| **Version Control** | Git, GitHub |
-
----
-
-## 🧪 Key Analysis Metrics
-
-| Metric | Description |
-|:------|:------------|
-| **ATS Score** | Overall resume compatibility with job description |
-| **Skill Match** | Percentage match for both technical & soft skills |
-| **Action Verb Density** | Measures strength & impact of resume wording |
-| **Experiene Match** | Checks if experience meets JD requirements |
-| **Education Match** | Validates degree/domain relevance |
-| **Section Coverage** | Detects missing or incomplete resume sections |
-| **Resume Length** | Evaluates optimal word count based on experience |
-
----

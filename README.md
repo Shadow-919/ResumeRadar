@@ -90,9 +90,10 @@ All datasets are optimized for high-accuracy matching.
 ### 🖥️ Home Page with Resume upload
 
 <p align="center">
-  <img src="assets/H1.JPG" width="80%" />
+  <!-- <img src="assets/H1.JPG" width="80%" />
   <img src="assets/H2.JPG" width="80%" />
-  <img src="assets/H3.JPG" width="80%" />
+  <img src="assets/H3.JPG" width="80%" /> -->
+  <img src="assets/Full_Home_Page.png" width="80%" />
 </p>
 
 ---
@@ -100,14 +101,15 @@ All datasets are optimized for high-accuracy matching.
 ## 📈 ATS Insights with dashboard
 
 <p align="center">
-  <img src="assets/O1.JPG" width="80%" />
+  <!-- <img src="assets/O1.JPG" width="80%" />
   <img src="assets/O2.JPG" width="80%" />
   <img src="assets/O3.JPG" width="80%" />
   <img src="assets/O4.JPG" width="80%" />
   <img src="assets/O5.JPG" width="80%" />
   <img src="assets/O6.JPG" width="80%" />
   <img src="assets/O7.JPG" width="80%" />
-  <img src="assets/O8.JPG" width="80%" />
+  <img src="assets/O8.JPG" width="80%" /> -->
+  <img src="assets/Full_Result_Page.png" width="80%" />
 </p>
 
 ---

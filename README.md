@@ -2,7 +2,7 @@
 
 **An NLP-driven resume-analysis system that extracts key insights, matches skills with job descriptions, evaluates experience & education relevance, and generates ATS-style scoring through a modern, interactive dashboard powered by Flask.**
 
-🔗 **Live Website:** [Link](https://resumeradar-1c77.onrender.com/)
+## 🔗 **Live Website:** [Link](https://resumeradar-1c77.onrender.com/)
 
 ---
 
@@ -15,7 +15,7 @@ This project performs a complete NLP-based breakdown of a candidate’s resume:
 - Matches them with job description requirements
 - Computes an ATS score
 - Generates an interactive, visual analysis dashboard
-- The result? A professional, actionable resume assessment — instantly.
+- The result? A professional, actionable resume assessment instantly.
 
 ---
 

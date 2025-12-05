@@ -21,7 +21,7 @@ This project performs a complete NLP-based breakdown of a candidate’s resume:
 
 ## 🚀 Project Highlights
 
-- ⚡ **Instant ATS Analysis** - Complete breakdown in under 5 seconds
+- ⚡ **Instant ATS Analysis** - Complete breakdown in under 10 seconds
 - 🧠 **Advanced NLP Pipelines** to extract structured resume data
 - 🎯 **Skill Matching Engine** for technical & soft skills
 - 📊 **Interactive Dashboard** built using Chart.js
